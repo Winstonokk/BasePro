@@ -2,16 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion rootProject.ext.android["compileSdkVersion"]
-
+    buildToolsVersion rootProject.ext.android["buildToolsVersion"]
     useLibrary 'org.apache.http.legacy'
-
     compileOptions {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
     }
-
     defaultConfig {
-        applicationId "com.xjp.wonderfulcinema"
+        applicationId "com.barnettwong.basepro"
         minSdkVersion rootProject.ext.android["minSdkVersion"]
         targetSdkVersion rootProject.ext.android["targetSdkVersion"]
         versionCode rootProject.ext.android["versionCode"]
@@ -20,24 +18,8 @@ android {
         multiDexEnabled true
 
         ndk {
-            //选择要添加的对应cpu类型的.so库。
-            abiFilters 'armeabi', 'armeabi-v7a','x86'
-        }
-
-    }
-
-    repositories {
-        flatDir {
-            dirs 'libs'
-        }
-    }
-
-    signingConfigs {
-        debug {
-            keyAlias 'android.keystore'
-            keyPassword 'android'
-            storeFile file('D:/android/keySign/android.keystore')
-            storePassword 'android'
+            // 设置支持的SO库架构
+            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'x86'//,'x86_64', 'arm64-v8a'
         }
     }
 
@@ -46,89 +28,135 @@ android {
             buildConfigField "boolean", "LOG_DEBUG", "true"
             buildConfigField "boolean", "USE_CANARY", "true"
             minifyEnabled false
+            // ZipAlign优化
+            zipAlignEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-
         release {
+            // 不显示Log
             buildConfigField "boolean", "LOG_DEBUG", "false"
             buildConfigField "boolean", "USE_CANARY", "false"
-            minifyEnabled true
-            shrinkResources true
+            // 设置混淆
+            minifyEnabled false
+            // 移除无用的resource文件，前提minifyEnabled必须打开
+            shrinkResources false
+            // ZipAlign优化
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
     lintOptions {
         disable 'InvalidPackage'
         disable "ResourceType"
         abortOnError false
-    }
-
-    dexOptions {
-        javaMaxHeapSize "4g"
-        jumboMode = true
-        preDexLibraries = false
-        additionalParameters = [
-                '--multi-dex',//多分包
-                '--set-max-idx-number=60000'//每个包内方法数上限
-        ]
+        disable 'GoogleAppIndexingWarning'
     }
 }
-
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'me.jessyan:arms:2.5.0'
-    implementation 'me.jessyan:arms-imageloader-glide:2.5.0'
-    implementation 'com.githang:status-bar-compat:0.7'
 
-    //view
-    implementation rootProject.ext.dependencies["autosize"]
-    annotationProcessor(rootProject.ext.dependencies["butterknife-compiler"]) {
-        exclude module: 'support-annotations'
-    }
-
-    //tools
-    annotationProcessor rootProject.ext.dependencies["dagger2-compiler"]
-
-    //注意 Arms 核心库现在并不会依赖某个 EventBus, 要想使用 EventBus, 还请在项目中自行依赖对应的 EventBus
-
-    //现在支持两种 EventBus, greenrobot 的 EventBus 和畅销书 《Android源码设计模式解析与实战》的作者 何红辉 所作的 AndroidEventBus
-
-    //依赖后 Arms 会自动检测您依赖的 EventBus 并自动注册
-
-    //建议使用 AndroidEventBus, 特别是组件化项目, 原因请看 https://github.com/hehonghui/AndroidEventBus/issues/49
-
-    //这种做法可以让使用者有自行选择三方库的权利, 并且还可以减轻 Arms 的体积
-    implementation rootProject.ext.dependencies["androideventbus"]
 
     //test
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    testImplementation rootProject.ext.dependencies["junit"]
     debugImplementation rootProject.ext.dependencies["canary-debug"]
     releaseImplementation rootProject.ext.dependencies["canary-release"]
     testImplementation rootProject.ext.dependencies["canary-release"]
-    testImplementation rootProject.ext.dependencies["junit"]
+
+    //support
+    implementation rootProject.ext.dependencies["cardview-v7"]
 
     //design
     implementation rootProject.ext.dependencies["design"]
+    implementation rootProject.ext.dependencies["androideventbus"]
+    annotationProcessor rootProject.ext.dependencies["dagger2-compiler"]
+    implementation rootProject.ext.dependencies["progressmanager"]
+    implementation rootProject.ext.dependencies["retrofit-url-manager"]
+    implementation rootProject.ext.dependencies["lifecyclemodel"]
 
-    //butterknife
-    implementation rootProject.ext.dependencies["butterknife"]
-    implementation rootProject.ext.dependencies["butterknife-compiler"]
+    //view
+    annotationProcessor(rootProject.ext.dependencies["butterknife-compiler"]) {
+        exclude module: 'support-annotations'
+    }
+    implementation rootProject.ext.dependencies["paginate"]
+
+    //arms
+    implementation project(':library:arms')
+
+    //widget
+    implementation project(':library:widget')
+
+    //dialog
+    implementation project(':library:dialog')
+
+    //屏幕适配
+    implementation rootProject.ext.dependencies["autosize"]
+
+    //Arms 核心库不再包含 Glide, 想使用其他图片加载框架或者想自行扩展 ImageLoaderStrategy 就不要依赖 arms-imageloader-glide
+
+    //依赖 arms-imageloader-glide 后还需要在 GlobalConfiguration 中手动注册 GlideImageLoaderStrategy
+    implementation 'me.jessyan:arms-imageloader-glide:2.5.0'
+
+    //错误处理
     implementation rootProject.ext.dependencies['rxerrorhandler2']
+
+    //多dex分包
     implementation rootProject.ext.dependencies['multidex']
 
     //刷新加载
-    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.4-7'
-    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.0.4-7'
+    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.3'
+    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.0.3'
+
     //圆形图片
     implementation 'de.hdodenhof:circleimageview:3.0.0'
+
     //标题栏控件（https://github.com/wuhenzhizao/android-titlebar）
     implementation 'com.wuhenzhizao:titlebar:1.1.4'
+
     //工具类开源库
     implementation 'com.blankj:utilcode:1.19.0'
-    //动画
-    implementation 'com.github.XunMengWinter:CircularAnim:0.3.4'
-    //菜单tab
+
+    //底部菜单栏
     implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
 
+    //banner 图
+    implementation 'com.github.xiaohaibin:XBanner:1.6.4'
+
+    //eventbus
+    implementation rootProject.ext.dependencies["eventbus"]
+
+    //recycleView操作框架
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.40'
+
+    //扫码
+    implementation 'com.github.shenyuanqing.zxing:zxing-simplify:1.0.5'
+
+    //加载gif
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.16'
+
+    // 权限请求框架：https://github.com/getActivity/XXPermissions
+    implementation 'com.hjq:xxpermissions:5.3'
+
+    //腾讯bugly
+    //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9
+    implementation 'com.tencent.bugly:nativecrashreport:3.3.1'
+    //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
+    implementation 'com.tencent.bugly:crashreport:2.8.6.0'
+
+    //配合检测app更新的权限申请框架
+    implementation 'pub.devrel:easypermissions:2.0.0'
+
+    //Loader依赖
+    implementation 'com.wang.avi:library:2.1.3'
+
+    //知乎开源的图片选择框架
+    implementation 'com.zhihu.android:matisse:0.5.2-beta4'
+    //fastjson
+    implementation 'org.ligboy.retrofit2:converter-fastjson-android:2.1.0'
+    //可垂直跑、可水平跑的跑马灯  https://github.com/Bakumon/BulletinView
+    implementation 'me.bakumon:bulletinview:1.0.0'
+    //带删除线的textview https://github.com/SmallLee/LineTextView
+    implementation 'com.fang:linetextview:v1.0.0'
+
 }
+

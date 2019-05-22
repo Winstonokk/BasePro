@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="SettingBar" >
+        <!-- 左边 -->
+        <attr name="bar_leftText" format="string"/>
+        <attr name="bar_leftHint" format="string"/>
+        <attr name="bar_leftIcon" format="reference" />
+        <attr name="bar_leftColor" format="color" />
+        <attr name="bar_leftSize" format="dimension" />
+        <!-- 右边 -->
+        <attr name="bar_rightText" format="string" />
+        <attr name="bar_rightHint" format="string"/>
+        <attr name="bar_rightIcon" format="reference" />
+        <attr name="bar_rightColor" format="color" />
+        <attr name="bar_rightSize" format="dimension" />
+        <!-- 分割线 -->
+        <attr name="bar_lineVisible" format="boolean" />
+        <attr name="bar_lineColor" format="reference|color" />
+        <attr name="bar_lineSize" format="dimension" />
+        <attr name="bar_lineMargin" format="dimension" />
+    </declare-styleable>
+
+    <!--手势密码-->
+    <declare-styleable name="SecurityCenter">
+        <!-- 选中状态的手势点-->
+        <attr name="selectedBitmap" format="reference" />
+        <!-- 未选中状态的手势点-->
+        <attr name="unselectedBitmap" format="reference" />
+        <!-- 选中状态的手势小点-->
+        <attr name="selectedBitmapSmall" format="reference" />
+        <!-- 未选中状态的手势小点-->
+        <attr name="unselectedBitmapSmall" format="reference" />
+        <!-- 验证失败后再次验证的拦截时间-->
+        <attr name="waitTime" format="integer" />
+        <!-- 验证的最大失败次数-->
+        <attr name="maxFailCounts" format="integer" />
+        <!-- 绘制时最少连接的点数-->
+        <attr name="minPoint" format="integer" />
+        <!-- 字体的颜色-->
+        <attr name="paintColor" format="color" />
+        <!-- 字体的大小-->
+        <attr name="paintTextSize" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="CircularProgressDrawable">
+        <attr name="cpd_padding" format="reference|dimension"/>
+        <attr name="cpd_initialAngle" format="reference|integer"/>
+        <attr name="cpd_maxSweepAngle" format="reference|integer"/>
+        <attr name="cpd_minSweepAngle" format="reference|integer"/>
+        <attr name="cpd_strokeSize" format="reference|dimension"/>
+        <attr name="cpd_strokeColor" format="reference|color"/>
+        <attr name="cpd_strokeSecondaryColor" format="reference|color"/>
+        <attr name="cpd_strokeColors" format="reference"/>
+        <attr name="cpd_reverse" format="boolean"/>
+        <attr name="cpd_rotateDuration" format="reference|integer"/>
+        <attr name="cpd_transformDuration" format="reference|integer"/>
+        <attr name="cpd_keepDuration" format="reference|integer"/>
+        <attr name="cpd_transformInterpolator" format="reference"/>
+        <attr name="cpd_inAnimDuration" format="reference|integer"/>
+        <attr name="cpd_outAnimDuration" format="reference|integer"/>
+        <attr name="cpd_inStepColors" format="reference"/>
+        <attr name="cpd_inStepPercent" format="float"/>
+        <attr name="pv_progressMode"/>
+    </declare-styleable>
+
+
+</resources>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.xjp.wonderfulcinema">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.barnettwong.basepro">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -8,37 +9,68 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <!-- 相机权限 -->
-    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application
-        android:name=".app.WEApplication"
+        android:name="com.barnettwong.basepro.app.WEApplication"
         android:allowBackup="true"
         android:icon="@mipmap/app_logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning"
         android:usesCleartextTraffic="true">
 
-        <!--
-        只要依赖 AutoSize 就必须填写设计图尺寸, 否则报错, 不想使用 AutoSize 就不要依赖 AutoSize
-        只要填写完设计图的尺寸, AutoSize 就会自动启动, 以下 dp 尺寸是根据公式 px / (dpi / 160) 求出, 运算时使用测试机的 dpi 即可
-        AutoSize 的详细介绍请看这里 https://juejin.im/post/5bce688e6fb9a05cf715d1c2
-        -->
+        <!--屏幕适配-->
         <meta-data
             android:name="design_width_in_dp"
             android:value="375" />
+
+        <!--沉浸式  start-->
         <meta-data
-            android:name="design_height_in_dp"
-            android:value="667" /> <!-- arms配置 -->
+            android:name="android.max_aspect"
+            android:value="2.4" />
+        <!-- 适配华为（huawei）刘海屏 -->
         <meta-data
-            android:name="com.xjp.wonderfulcinema.app.GlobalConfiguration"
+            android:name="android.notch_support"
+            android:value="true" />
+        <!-- 适配小米（xiaomi）刘海屏 -->
+        <meta-data
+            android:name="notch.config"
+            android:value="portrait|landscape" />
+        <!--沉浸式  end-->
+
+        <!-- Arms 配置 -->
+        <meta-data
+            android:name="com.barnettwong.basepro.app.GlobalConfiguration"
             android:value="ConfigModule" />
 
+        <!-- bugly配置 start -->
+        <!-- 配置APP ID -->
+        <meta-data
+            android:name="BUGLY_APPID"
+            android:value="7eba9da5e7" />
+        <!-- 配置APP版本号 -->
+        <meta-data
+            android:name="BUGLY_APP_VERSION"
+            android:value="1.0.0" />
+        <!-- 配置APP渠道号 -->
+        <meta-data
+            android:name="BUGLY_APP_CHANNEL"
+            android:value="APP_CHANNEL" />
+        <!-- 配置Bugly调试模式（true或者false） -->
+        <meta-data
+            android:name="BUGLY_ENABLE_DEBUG"
+            android:value="true" />
+        <!-- bugly配置 end -->
+
+
+        <!-- android7.0文件访问 -->
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.xjp.wonderfulcinema.fileProvider"
+            android:authorities="com.barnettwong.basepro.boss_token.fileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -46,11 +78,15 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <!-- 启动页 -->
         <activity
-            android:name=".mvp.ui.activity.MainActivity"
-            android:screenOrientation="portrait">
+            android:name="com.barnettwong.basepro.mvp.ui.activity.LauncherActivity"
+            android:theme="@style/LauncherTheme">
+
+            <!-- 程序入口 -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
